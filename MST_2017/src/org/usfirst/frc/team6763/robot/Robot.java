@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot {
 		} else if (timer.get() > 5.75 && timer.get() < 7.75)  {
 			myRobot.drive(-0.5, 0.0); // drive forward
 		} else {
-			stop(); // stop
+			stop(); // stop 
 		}
 	}
 	/**
