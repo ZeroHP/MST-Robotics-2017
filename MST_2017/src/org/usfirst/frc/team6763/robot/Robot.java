@@ -70,7 +70,7 @@ public class Robot extends IterativeRobot {
 		   ^	 ^		^	  ^
 		   |	 |		|	  |
 		   |	 |		|	  |
-		   |	 |		|	  Sets the turning speed/curve
+		   |	 |		|	  Sets the turning speed/curve offset
 		   |	 |		|	  
 		   |	 |		Sets the speed for the motors
 		   |	 |		 
@@ -82,12 +82,16 @@ public class Robot extends IterativeRobot {
 		// Drive for 2 seconds
 		if (timer.get() < 2.0) {
 			myRobot.drive(-0.5, 0.0); // drive forwards half speed
+			print("Driving forwards for 2 seconds");
 		} else if (timer.get() > 2.0 && timer.get() < 5.75)  { 
 			myRobot.drive(-0.5, 0.5); // drive right 
+			print("Turning 450* for seconds 3.75 Seconds");
 		} else if (timer.get() > 5.75 && timer.get() < 7.75)  {
 			myRobot.drive(-0.5, 0.0); // drive forward
+			print("Driving forwards for 2 seconds");
 		} else {
 			stop(); // stop 
+			print("Stoping indefinitely");
 		}
 	}
 	/**
