@@ -45,8 +45,8 @@ public class Robot extends IterativeRobot {
 		myRobot.drive(-0.5, -0.25);
 		   ^	 ^		^	  ^
 		   |	 |		|	  |
-		   |	 |		|	  
-		   |	 |		|	   
+		   |	 |		|	  |
+		   |	 |		|	  Sets the turning speed/curve
 		   |	 |		|	  
 		   |	 |		Sets the speed for the motors
 		   |	 |		
