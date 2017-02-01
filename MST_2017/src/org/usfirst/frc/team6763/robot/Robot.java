@@ -73,7 +73,7 @@ public class Robot extends IterativeRobot {
 		   |	 |		|	  Sets the turning speed/curve
 		   |	 |		|	  
 		   |	 |		Sets the speed for the motors
-		   |	 |		
+		   |	 |		 
 		   |	 Runs the function we created in RobotDrive.class
 		   |	 
 		Declares that the drive code is for this robot
