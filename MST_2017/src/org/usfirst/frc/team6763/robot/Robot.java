@@ -26,7 +26,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 	}
 
-	/**  
+	/**   
 	 * This function is run once each time the robot enters autonomous mode
 	 */
 	@Override
