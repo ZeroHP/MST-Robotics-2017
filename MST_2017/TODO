@@ -1,0 +1,17 @@
+1. setup button to stop the robot
+
+2. calculate how far the robot has to go for auto
+
+3. move the robot roughly 8ft
+
+4. move the robot exactly 8ft
+
+5. move the arm motor
+
+6. move the arm motor in auto
+
+7. roughly make the path that the robot has to go for auto
+
+8. roughly move the robot through the entire auto
+
+9. exactly move the robot in auto
