@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team6763.robot;
 
 //Imports the other files needed by the program
@@ -16,7 +17,10 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Encoder;
 
 
 /**
@@ -28,6 +32,34 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class Robot extends IterativeRobot {
 	
+	
+	int targetVal = 240;
+	int rightTargetVal = 120;
+	int revPerInch = 28;
+	int stopPoint = targetVal * revPerInch;
+	int autoState = 0;
+	
+	
+	
+	DigitalInput limitSwitch;
+	Encoder myEncoder;
+
+    public void robotInit() {
+    	limitSwitch = new DigitalInput(3);
+    	myEncoder = new Encoder(1, 0);
+    	myEncoder.setReverseDirection(true);
+    }
+
+    public void operatorControl() {
+    	// more code here
+    	while (limitSwitch.get()) {
+    		Timer.delay(10);
+    	}
+        // more code here
+    }
+
+	
+	
 	RobotDrive myRobot = new RobotDrive(0, 1, 2, 3);
 	Joystick stick = new Joystick(1);
 	Timer timer = new Timer();
@@ -37,11 +69,6 @@ public class Robot extends IterativeRobot {
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	@Override
-	public void robotInit() {
-		
-	}
-
 	/**
 	 * This function is run once each time the robot enters autonomous mode
 	 */
@@ -49,6 +76,9 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		timer.reset();
 		timer.start();
+		myEncoder.reset();
+		
+		System.out.println("stopPoint =" + stopPoint);
 	}
 
 	/**
@@ -61,7 +91,10 @@ public class Robot extends IterativeRobot {
 	}
 
 	
-	
+	 public void disabledPeriodic(){
+		 System.out.println("myEncoder =" + myEncoder.get());
+	 }
+	 
 	@Override
 	public void autonomousPeriodic() {
 		/*
@@ -78,7 +111,73 @@ public class Robot extends IterativeRobot {
 		   |	 
 		Declares that the drive code is for this robot
 		
+		
 		*/
+		
+		int currentPoint = myEncoder.get();
+		
+		//System.out.println("stopPoint =" + stopPoint);
+		switch (autoState) {
+		
+		case 0:
+			if (currentPoint < stopPoint) 
+			{
+				myRobot.drive(-0.5, 0.0);
+				System.out.println("encoder count" + currentPoint);
+			} else
+			{
+				autoState++;
+				myEncoder.reset();
+				currentPoint = myEncoder.get();
+				stopPoint = rightTargetVal * revPerInch;
+				System.out.println("reset encoder count" + currentPoint);
+				System.out.println("stopPoint =" + stopPoint);
+			}
+			case 1:
+				
+				if (currentPoint < stopPoint) 
+				{
+					myRobot.drive(-0.5, 0.5);
+					System.out.println("encoder count" + currentPoint);
+				} else
+				{
+					autoState++;
+					myEncoder.reset();
+
+					stopPoint = targetVal * revPerInch;
+
+					
+				}	
+			case 2:
+				
+				if (currentPoint < stopPoint) 
+				{
+					myRobot.drive(-0.5, -0.5);
+					System.out.println("encoder count" + currentPoint);
+				} else
+				{
+					autoState++;
+					myEncoder.reset();
+
+
+					stop();
+					
+				}	
+				
+				
+				
+			}
+
+		
+		if (currentPoint < stopPoint) {
+			myRobot.drive(-0.5, 0.0);
+			
+		} else  {
+			
+			stop();
+			
+		}
+		/*		
 		// Drive for 2 seconds
 		if (timer.get() < 2.0) {
 			myRobot.drive(-0.5, 0.0); // drive forwards half speed
@@ -93,7 +192,10 @@ public class Robot extends IterativeRobot {
 			stop(); // stop 
 			print("Stoping indefinitely");
 		}
+	*/
 	}
+	
+	
 	/**
 	 * This function is called once each time the robot enters tele-operated
 	 * mode
@@ -120,59 +222,3 @@ public class Robot extends IterativeRobot {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-
-                           ________
-  ____                    /		   \
- /    |__________________/	. . . . \
-|	  |			        	.  .. . /
-|---  | 	     		.  . . .   |
-|     | __________________	.	.	\
- \____|					 \	. . ..	/
-						  \________/
-
-
-*/
