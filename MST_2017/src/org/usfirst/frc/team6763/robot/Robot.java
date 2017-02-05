@@ -35,16 +35,59 @@ public class Robot extends IterativeRobot {
 	
 	int targetVal = 240;
 	int rightTargetVal = 120;
-	int revPerInch = 28;
+	int revPerInch = 13;
 	int stopPoint = targetVal * revPerInch;
 	int autoState = 0;
-	
-	
+		
 	
 	DigitalInput limitSwitch;
 	Encoder myEncoder;
 
-    public void robotInit() {
+	@Override
+	public void stop() { // sets stop(); to stop all motors
+//		myRobot.drive(0.0, 0.0);
+		myRobot.arcadeDrive(0, 0);
+
+	
+	}
+
+	@Override
+	public void driveForward() { // sets stop(); to stop all motors
+		//myRobot.drive(-0.5, 0.0);
+		myRobot.arcadeDrive(-0.5, 0);
+		
+	}
+
+	@Override
+	public void driveReverse() { // sets stop(); to stop all motors
+//myRobot.drive(0.5, 0.0);
+
+		myRobot.arcadeDrive(0.5, 0);
+
+	}	
+	
+	@Override
+	public void driveForwardRight() { // sets stop(); to stop all motors
+		//myRobot.drive(-0.5, 0.5);
+		myRobot.arcadeDrive(-0.5, 0.5);
+
+	
+	}
+
+	
+	@Override
+	public void driveForwardLeft() { // sets stop(); to stop all motors
+	//	myRobot.drive(-0.5, -0.5);
+
+		myRobot.arcadeDrive(-0.5, -0.5);
+
+	
+	}
+	
+	
+	
+	
+	public void robotInit() {
     	limitSwitch = new DigitalInput(3);
     	myEncoder = new Encoder(1, 0);
     	myEncoder.setReverseDirection(true);
@@ -60,8 +103,8 @@ public class Robot extends IterativeRobot {
 
 	
 	
-	RobotDrive myRobot = new RobotDrive(0, 1, 2, 3);
-	Joystick stick = new Joystick(1);
+	RobotDrive myRobot = new RobotDrive(0, 2);
+	Joystick stick = new Joystick(0);
 	Timer timer = new Timer();
 	
 	
@@ -77,22 +120,17 @@ public class Robot extends IterativeRobot {
 		timer.reset();
 		timer.start();
 		myEncoder.reset();
+		autoState = 0;
 		
-		System.out.println("stopPoint =" + stopPoint);
+		System.out.println("stopPoint = " + stopPoint);
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
-
-	@Override
-	public void stop() { // sets stop(); to stop all motors
-		myRobot.drive(0.0, 0.0);
-	}
-
 	
 	 public void disabledPeriodic(){
-		 System.out.println("myEncoder =" + myEncoder.get());
+		 System.out.println("myEncoder = " + myEncoder.get());
 	 }
 	 
 	@Override
@@ -122,7 +160,7 @@ public class Robot extends IterativeRobot {
 		case 0:
 			if (currentPoint < stopPoint) 
 			{
-				myRobot.drive(-0.5, 0.0);
+				driveForward();
 				System.out.println("encoder count" + currentPoint);
 			} else
 			{
@@ -130,14 +168,16 @@ public class Robot extends IterativeRobot {
 				myEncoder.reset();
 				currentPoint = myEncoder.get();
 				stopPoint = rightTargetVal * revPerInch;
-				System.out.println("reset encoder count" + currentPoint);
-				System.out.println("stopPoint =" + stopPoint);
+				System.out.println("reset encoder count = " + currentPoint);
+				System.out.println("stopPoint = " + stopPoint);
 			}
+			break;
 			case 1:
 				
 				if (currentPoint < stopPoint) 
 				{
-					myRobot.drive(-0.5, 0.5);
+					
+					driveForwardLeft();
 					System.out.println("encoder count" + currentPoint);
 				} else
 				{
@@ -147,12 +187,13 @@ public class Robot extends IterativeRobot {
 					stopPoint = targetVal * revPerInch;
 
 					
-				}	
+				}
+				break;
 			case 2:
 				
 				if (currentPoint < stopPoint) 
 				{
-					myRobot.drive(-0.5, -0.5);
+					driveForward();
 					System.out.println("encoder count" + currentPoint);
 				} else
 				{
@@ -163,20 +204,11 @@ public class Robot extends IterativeRobot {
 					stop();
 					
 				}	
-				
+				break;
 				
 				
 			}
 
-		
-		if (currentPoint < stopPoint) {
-			myRobot.drive(-0.5, 0.0);
-			
-		} else  {
-			
-			stop();
-			
-		}
 		/*		
 		// Drive for 2 seconds
 		if (timer.get() < 2.0) {
