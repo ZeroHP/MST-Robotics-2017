@@ -1,0 +1,3 @@
+public void disabledPeriodic(){
+		 System.out.println("rightEncoder = " + rightEncoder.get());
+	 }
