@@ -1,0 +1,161 @@
+package org.usfirst.frc.team6763.robot;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
+//Imports the other files needed by the program
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+//Imports the other files needed by the program
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+
+
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ */
+public class Robot extends IterativeRobot {
+	
+	RobotDrive myRobot = new RobotDrive(0, 2);
+	Joystick stick = new Joystick(0);
+	Timer timer = new Timer();
+	
+	//DigitalInput LimitSwitch; 
+	//DigitalInput LimitSwitch1;
+	
+	Encoder rightEncoder;
+	Encoder leftEncoder;
+	
+	
+	/**
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	@Override
+	public void robotInit() {
+		//LimitSwitch = new DigitalInput(0);
+		//LimitSwitch1 = new DigitalInput(1);
+		
+		rightEncoder = new Encoder(1, 0);
+    	rightEncoder.setReverseDirection(true);
+    	leftEncoder = new Encoder (3, 2);
+    	leftEncoder.setReverseDirection(false);
+	}
+
+	/**
+	 * This function is run once each time the robot enters autonomous mode
+	 */
+	@Override
+	public void autonomousInit() {
+		timer.reset();
+		timer.start();
+	}
+
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	@Override
+	public void autonomousPeriodic() {
+		// Drive for 2 seconds
+		/*
+		if (timer.get() < 2.0) {
+			myRobot.drive(-0.5, 0.1); // drive forwards half speed
+		} else if (timer.get() > 2.0 && timer.get() < 5.75)  { 
+			myRobot.drive(-0.5, 0.5); // drive right 
+		} else if (timer.get() > 5.75 && timer.get() < 7.75)  {
+			myRobot.drive(-0.5, 0.1); // drive forward
+		} else {
+			myRobot.drive(0.0, 0.0); // stop
+		}
+		*/
+		
+		
+		//myRobot.tankDrive(-0.6, -0.5612);
+		
+		
+		/*
+		myRobot.tankDrive(0.6, 0.6);
+	
+		System.out.println("Right Encoder = " + rightEncoder.getRate());
+		System.out.println("Left Encoder = " + leftEncoder.getRate());
+		
+		
+		//System.out.println("RightEncoder = " + rightEncoder.get());
+		//System.out.println("LeftEncoder = " + leftEncoder.get());
+		 */
+		
+		if (rightEncoder.get() < 9750) 
+		{
+			myRobot.tankDrive(-0.6, -0.5612);
+			System.out.println("encoder count" + rightEncoder.get());
+		} else
+		{
+			myRobot.tankDrive(0, 0);
+			}
+		
+		if (leftEncoder.get() < 9750) 
+		{
+			myRobot.tankDrive(-0.6, -0.5612);
+			System.out.println("encoder count" + leftEncoder.get());
+		} else
+		{
+			myRobot.tankDrive(0, 0);
+			}
+		
+	}
+
+	/**
+	 * This function is called once each time the robot enters tele-operated
+	 * mode
+	 */
+	@Override
+	public void teleopInit() {
+	}
+
+	/**
+	 * This function is called periodically during operator control
+	 */
+	@Override
+	public void teleopPeriodic() {
+		myRobot.arcadeDrive(stick);
+		
+		/*
+		if (LimitSwitch.get()) {
+    		myRobot.drive(0.0 ,0.0); 
+    		}
+		
+		
+		if (LimitSwitch1.get()) {
+    		myRobot.drive(0.0 ,0.0); 
+    		}
+		*/
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	@Override
+	public void testPeriodic() {
+		LiveWindow.run();
+	}
+	
+	public void disabledPeriodic(){
+		 System.out.println("RightEncoder = " + rightEncoder.get());
+		 System.out.println("LeftEncoder = " + leftEncoder.get());
+	 }
+	
+}
