@@ -1,0 +1,199 @@
+package org.usfirst.frc.team6763.robot;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
+//Imports the other files needed by the program
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
+
+
+
+
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ */
+public class Robot extends IterativeRobot {
+	
+	RobotDrive myRobot = new RobotDrive(0, 2);
+	Joystick stick = new Joystick(0);
+	Timer timer = new Timer();
+	Jaguar ArmMotor = new Jaguar(9);
+	Joystick mXboxController = new Joystick(1);
+	Button button1 = new JoystickButton(mXboxController, 1);
+	
+	//DigitalInput LimitSwitch; 
+	//DigitalInput LimitSwitch1;
+	
+	Encoder slaveEncoder; // Right Side Encoder
+	Encoder masterEncoder; // Left Side Encoder
+	
+	float TicksPerInch = 108.333333F; // Number of Encoder Ticks per Inch
+	int InchesPerFoot = 12; 
+	
+	double masterPower = 0.475;
+	double slavePower = 0.5;
+	double error = 0.0;
+	double kp = 0.05;
+	double maxEncoderError = TicksPerInch * 85;
+	
+	/**
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	@Override
+	public void robotInit() {
+		//LimitSwitch = new DigitalInput(0);
+		//LimitSwitch1 = new DigitalInput(1);
+		
+		slaveEncoder = new Encoder(1, 0);
+    	slaveEncoder.setReverseDirection(true);
+    	masterEncoder = new Encoder (3, 2);
+    	masterEncoder.setReverseDirection(false);
+	}
+
+	/**
+	 * This function is run once each time the robot enters autonomous mode
+	 */
+	@Override
+	public void autonomousInit() {
+		timer.reset();
+		timer.start();
+		
+		System.out.println("Master Count,Slave Count,Error,KP,MasterPower,SlavePower");
+		masterEncoder.reset();
+		slaveEncoder.reset();
+	}
+
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	@Override
+	public void autonomousPeriodic() {
+		
+		/*
+		myRobot.tankDrive(0.6, 0.6);
+	
+		System.out.println("Right Encoder = " + rightEncoder.getRate());
+		System.out.println("Left Encoder = " + leftEncoder.getRate());
+		
+		
+		//System.out.println("RightEncoder = " + rightEncoder.get());
+		//System.out.println("LeftEncoder = " + leftEncoder.get());
+		 */
+		
+		/*
+		if (rightEncoder.get() < TicksPerInch * (InchesPerFoot * 8)) //This should have the robot drive 8 feet
+		{
+			myRobot.tankDrive(-0.6, -0.5612);
+			System.out.println("encoder count" + rightEncoder.get());
+		} else
+		{
+			myRobot.tankDrive(0, 0);
+			}
+		
+		
+		
+		if (leftEncoder.get() < 9750) 
+		{
+			myRobot.tankDrive(-0.6, -0.5612);
+			System.out.println("encoder count" + leftEncoder.get());
+		} else
+		{
+			myRobot.tankDrive(0, 0);
+			}
+		*/
+		if (masterEncoder.get() < -10500){
+			myRobot.tankDrive(0, 0);
+		}
+		else {
+			myRobot.tankDrive(masterPower, slavePower);
+			error = masterEncoder.get() - slaveEncoder.get();
+			slavePower += error / maxEncoderError;
+		
+			if (slavePower > .55){
+				slavePower = .55;
+			}
+			else if (slavePower < .45){
+				slavePower = .45;
+			}
+		}
+		
+		System.out.println(masterEncoder.get() + "," + slaveEncoder.get() + "," + error + "," + kp + "," + masterPower + "," + slavePower);
+		
+		
+	}
+		
+	/**
+	 * This function is called once each time the robot enters tele-operated
+	 * mode
+	 */
+	@Override
+	public void teleopInit() {
+	}
+	
+	/**
+	 * This function is called periodically during operator control
+	 * @return 
+	 */
+	
+	@Override
+	public void teleopPeriodic() {
+		/*
+		while (LimitSwitch.get()) {
+			ArmMotor.set(0);
+		}
+		*/
+		
+		myRobot.tankDrive(mXboxController.getRawAxis(1), mXboxController.getRawAxis(5));
+		
+		
+		
+		/*
+		while (mXboxController.getRawButton(1)) {
+            ArmMotor.set(0.25);
+        }
+		
+        while (mXboxController.getRawButton(2)) {
+            ArmMotor.set(-0.25);
+        }
+		*/
+        
+		/*
+		if (LimitSwitch.get()) {
+    		myRobot.drive(0.0 ,0.0); 
+    		}
+		
+		
+		if (LimitSwitch1.get()) {
+    		myRobot.drive(0.0 ,0.0); 
+    		}
+		*/
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	@Override
+	public void testPeriodic() {
+		LiveWindow.run();
+	}
+	
+	public void disabledPeriodic(){
+		 //System.out.println("RightEncoder = " + slaveEncoder.get());
+		 //System.out.println("LeftEncoder = " + masterEncoder.get());
+	 }
+	
+}
