@@ -1,0 +1,135 @@
+package org.usfirst.frc.team6763.robot;
+
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
+//Imports the other files needed by the program
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
+
+
+
+
+public class Robot extends IterativeRobot {
+	
+	RobotDrive myRobot = new RobotDrive(0, 2);
+	Joystick stick = new Joystick(0);
+	Timer timer = new Timer();
+	Jaguar ArmMotor = new Jaguar(9);
+	SpeedController Climber = new Spark(7);
+	Joystick mXboxController = new Joystick(1);
+	
+	Encoder slaveEncoder; // Right Side Encoder
+	Encoder masterEncoder; // Left Side Encoder
+	
+	float TicksPerInch = 108.333333F; // Number of Encoder Ticks per Inch
+	int InchesPerFoot = 12; 
+	
+	double masterPower = 0.475;
+	double slavePower = 0.5;
+	double error = 0.0;
+	double kp = 0.05;
+	double maxEncoderError = TicksPerInch * 85;
+	
+	@Override
+	public void robotInit() {
+		slaveEncoder = new Encoder(3, 2);
+    	slaveEncoder.setReverseDirection(false);
+    	masterEncoder = new Encoder (1, 0);
+    	masterEncoder.setReverseDirection(true);
+    	CameraServer.getInstance().startAutomaticCapture();
+	}
+
+	@Override
+	public void autonomousInit() {
+		timer.reset();
+		timer.start();
+		System.out.println("Master Count,Slave Count,Error,KP,MasterPower,SlavePower");
+		masterEncoder.reset();
+		slaveEncoder.reset();
+	}
+	
+	@Override
+	public void autonomousPeriodic() {
+		
+			if (masterEncoder.get() < (TicksPerInch * InchesPerFoot * 12)) {
+				masterPower = -0.533;
+				slavePower = -0.5;
+				error = masterEncoder.get() - slaveEncoder.get();
+				if (error > 50){
+					masterPower = -0.531;
+				}
+				else if (error < -50){
+					masterPower = -0.535;
+				}
+				else if (error > -50 && error < 50){
+					masterPower = -0.533;
+				}
+			}
+			else {
+				masterPower = 0;
+				slavePower = 0;
+			}
+		myRobot.tankDrive(masterPower, slavePower);
+		
+		System.out.println(masterEncoder.get() + " , " + slaveEncoder.get() + " , " + error);
+		
+		/*
+		if (masterEncoder.get() > 10500 && masterEncoder.get() < 11000){
+			slavePower = -.6;
+			masterPower = -.47;
+		}
+		else {
+			myRobot.tankDrive(masterPower, slavePower);
+			error = masterEncoder.get() - slaveEncoder.get();
+			slavePower += error / maxEncoderError;
+		
+			if (slavePower < .55){
+				slavePower = -.55;
+			}
+			else if (slavePower > .45){
+				slavePower = -.45;
+			}
+		}
+		if (masterEncoder.get() < 11000) {
+			myRobot.tankDrive(0, 0);
+		}
+		*/
+		
+		//System.out.println(masterEncoder.get() + "," + slaveEncoder.get() + "," + error + "," + kp + "," + masterPower + "," + slavePower);
+		//System.out.println(masterEncoder.get() + "," + slaveEncoder.get());
+	}
+		
+	@Override
+	public void teleopInit() {
+	}
+	
+	@Override
+	public void teleopPeriodic() {
+		myRobot.arcadeDrive(mXboxController);
+		Climber.set(mXboxController.getRawAxis(5));
+		ArmMotor.set(stick.getRawAxis(1)*.25);
+	}
+
+	@Override
+	public void testPeriodic() {
+		LiveWindow.run();
+	}
+	
+	public void disabledPeriodic(){
+		 //System.out.println("RightEncoder (slave) = " + slaveEncoder.get());
+		 //System.out.println("LeftEncoder (master) = " + masterEncoder.get());
+		//System.out.println(masterEncoder.get() + " , " + slaveEncoder.get());
+	 }
+}h
